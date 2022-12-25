@@ -1,0 +1,2 @@
+win32kbase!DirectComposition::CApplicationChannel::ProcessCommandBufferIterator
+win32kbase!DirectComposition::CVisualMarshaler::SetBufferProperty

