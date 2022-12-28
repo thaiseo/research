@@ -27,8 +27,8 @@ typedef NTSTATUS(*pNtDCompositionCommitChannel)(
 #define nCmdCreateResource 0x1
 #define nCmdReleaseResource 0x3
 #define nCmdSetBufferProperty 0xC
-#define CInteractionTrackerBindingManagerMarshaler 0x59
-#define CInteractionTrackerMarshaler 0x58
+#define CInteractionTrackerBindingManagerMarshaler 0x5b
+#define CInteractionTrackerMarshaler 0x5a
 
 HANDLE hChannel;
 PVOID pMappedAddress = NULL;  SIZE_T SectionSize = 0x4000;
