@@ -3,3 +3,4 @@ win32kbase!DirectComposition::CVisualMarshaler::SetBufferProperty
 win32kbase!DirectComposition::CApplicationChannel::ProcessCommandBufferIterator
 win32kbase!DirectComposition::CInteractionTrackerBindingManagerMarshaler::SetBufferProperty
 #win32kbase!DirectComposition::CBrushMarshaler::AsBrushMarshaler
+win32kbase!DirectComposition::CApplicationChannel::ReleaseResource
