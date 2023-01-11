@@ -662,8 +662,6 @@ int main(int argc, TCHAR* argv[]) {
             return 0;
         }
 
-        NtDCompositionCommitChannel(hChannel, &dwArg1, &dwArg2, 0, p);
-
         InjectToWinlogon();
         RestoreStatus();
         *(DWORD*)pMappedAddress = nCmdReleaseResource;
