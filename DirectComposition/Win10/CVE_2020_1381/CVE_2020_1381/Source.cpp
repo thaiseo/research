@@ -558,9 +558,6 @@ int main(int argc, TCHAR* argv[]) {
     _NtDCompositionCreateSynchronizationObject NtDCompositionCreateSynchronizationObject;
     NtDCompositionCreateSynchronizationObject = (_NtDCompositionCreateSynchronizationObject)GetProcAddress(LoadLibrary(L"win32u.dll"), "NtDCompositionCreateSynchronizationObject");
 
-    void* p = 0;
-    ntStatus = NtDCompositionCreateSynchronizationObject(&p);
-
     ntStatus = NtDCompositionCreateChannel(&hChannel, &SectionSize, &pMappedAddress);
     if (!NT_SUCCESS(ntStatus)) {
         printf("Create channel error!\n");
