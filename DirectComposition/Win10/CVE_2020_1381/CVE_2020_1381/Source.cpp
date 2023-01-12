@@ -267,7 +267,7 @@ HPALETTE createPaletteofSize2(int size) {
 
     p[0] = (DWORD64)0xffffffff;
     p[3] = (DWORD64)0x04;
-    p[9] = where - 8 + 3;
+    p[9] = where - 8 - 9;
 
     lPalette->palNumEntries = pal_cnt;
     lPalette->palVersion = 0x300;
